@@ -1,0 +1,39 @@
+# NashForge CI：ruff 0.16.10 门禁 + pytest（含慢测 G1–G4 与确定性）。
+# 矩阵：Python 3.12 / 3.13 × ubuntu / windows。作者：晨星。
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: ruff+pytest (py${{ matrix.python }} / ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock.txt
+          pip install -e .
+
+      - name: Ruff lint (hard gate)
+        run: ruff check .
+
+      - name: Pytest (all gates, incl. slow integration)
+        run: pytest -q
