@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nashforge"
+version = "0.1.0"
+description = "不完美信息博弈精确均衡求解：序列式 LP 精确 oracle + CFR/CFR+ 近似求解 + 四条交付门禁"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "晨星" }]
+license = { text = "MIT" }
+keywords = ["game-theory", "nash-equilibrium", "kuhn-poker", "cfr", "sequence-form", "lp"]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff==0.16.10"]
+
+[project.scripts]
+nashforge = "nashforge.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["nashforge*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "C4", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B", "SIM"]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+testpaths = ["tests"]
